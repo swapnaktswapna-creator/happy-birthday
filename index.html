@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vidhushi Prerana Uday - Happy Birthday!</title>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ffb3c1;
+            --bg: #0a0a0a;
+            --text: #ffffff;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            overflow: hidden; 
+        }
+
+        .music-control {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            background: var(--primary); color: white; border-radius: 50%;
+            width: 50px; height: 50px; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; box-shadow: 0 0 10px var(--primary);
+        }
+
+        .hearts-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: -1;
+        }
+
+        .floating-heart {
+            position: fixed; bottom: -20px; cursor: pointer;
+            pointer-events: all; z-index: 50; transition: 6s linear;
+        }
+
+        .slide {
+            display: none;
+            height: 100vh; width: 100%;
+            flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; box-sizing: border-box;
+            position: absolute; top: 0; left: 0;
+        }
+
+        .slide.active { display: flex; animation: fadeIn 0.5s ease-in; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .media-box {
+            width: 90%; max-width: 500px;
+            border: 4px solid var(--primary); border-radius: 15px;
+            margin: 15px 0; background: #111; overflow: hidden;
+        }
+
+        .large-video-box {
+            width: 95%; max-width: 800px; height: 400px;
+            border: 5px solid var(--primary); border-radius: 20px;
+            margin-bottom: 20px; display: none;
+        }
+
+        .photo-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; width: 90%; max-width: 500px;
+        }
+
+        .grid-item { border: 2px solid var(--primary); border-radius: 10px; overflow: hidden; height: 100px; }
+        video, img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .btn {
+            background: var(--primary); color: white; border: none;
+            padding: 15px 30px; border-radius: 30px;
+            font-size: 1rem; cursor: pointer;
+            text-transform: uppercase; font-weight: bold;
+            transition: 0.3s; margin-top: 20px;
+        }
+        .btn:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--primary); }
+
+        #tree-canvas { max-width: 100%; height: 350px; display: none; background: transparent; }
+        .big-heart-btn { font-size: 120px; cursor: pointer; transition: 2s cubic-bezier(0.5, 0, 0.5, 1); }
+
+        #question-area { position: relative; height: 150px; width: 100%; max-width: 300px; }
+        .no-btn { position: absolute; background: #555; }
+
+        .heartfelt-para {
+            max-width: 600px; font-size: 1.1rem; line-height: 1.6;
+            background: rgba(255, 77, 109, 0.1); padding: 20px;
+            border-radius: 20px; border-left: 5px solid var(--primary);
+        }
+
+        .cake-container { position: relative; cursor: pointer; width: 150px; height: 150px; }
+        .cake { font-size: 80px; }
+        .knife { position: absolute; top: -10px; right: -10px; font-size: 40px; transition: 0.5s; transform: rotate(-45deg); }
+
+        h1 { font-size: 2rem; color: var(--primary); margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="birthday-song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="music-control" onclick="toggleMusic()" id="musicBtn">🎵</div>
+    <div class="hearts-bg" id="hearts"></div>
+
+    <section class="slide active" id="slide1">
+        <h1>Hey, My Big Sister... 👑</h1>
+        <p>A journey for the future PhD Engineer!</p>
+        <div class="media-box">
+            <video src="intro.mp4" autoplay muted loop playsinline></video>
+        </div>
+        <button class="btn" onclick="startSurprise()">Start Surprise</button>
+    </section>
+
+    <section class="slide" id="slide2">
+        <h1 id="tree-instr">Touch the Heart! ❤️</h1>
+        
+        <div id="big-heart-container" class="big-heart-btn" onclick="triggerTreeSequence()">❤️</div>
+        
+        <div id="mid-video-box" class="large-video-box">
+            <video id="midVideo" src="surprise-video.mp4" controls playsinline></video>
+        </div>
+
+        <canvas id="tree-canvas"></canvas>
+        
+        <button class="btn" id="tree-next" style="display:none;" onclick="nextSlide(3)">Continue Journey</button>
+    </section>
+
+    <section class="slide" id="slide3">
+        <h1>Quick Question...</h1>
+        <p>Do you love your brother? 😜</p>
+        <div id="question-area">
+            <button class="btn" onclick="nextSlide(4)">Yes, Of Course!</button>
+            <button class="btn no-btn" id="noBtn" onmouseover="moveNoButton()">No</button>
+        </div>
+    </section>
+
+    <section class="slide" id="slide4">
+        <h1>✨ Memories ✨</h1>
+        <div class="photo-grid">
+            <div class="grid-item"><img src="photo1.jpg"></div>
+            <div class="grid-item"><img src="photo2.jpg"></div>
+            <div class="grid-item"><img src="photo3.jpg"></div>
+            <div class="grid-item"><img src="photo4.jpg"></div>
+            <div class="grid-item"><img src="photo5.jpg"></div>
+            <div class="grid-item"><img src="photo6.jpg"></div>
+        </div>
+        <button class="btn" onclick="nextSlide(5)">My Message</button>
+    </section>
+
+    <section class="slide" id="slide5">
+        <div class="heartfelt-para">
+            <h2>To My Dear Vidhushi,</h2>
+            <p>
+                You are my inspiration. From wanting to be a doctor to becoming a brilliant Engineer, 
+                your journey is incredible. I can't wait to call you <strong>Dr. Vidhushi</strong> 
+                after your PhD! You are the best sister in the world.
+            </p>
+            <img src="pig.gif" style="width:60px;">
+        </div>
+        <button class="btn" onclick="nextSlide(6)">Engineering Challenge</button>
+    </section>
+
+    <section class="slide" id="slide6">
+        <h1>Logic Check! ⚙️</h1>
+        <p>Which component is missing from your life?</p>
+        <button class="btn" onclick="alert('Correct! More sleep is required.'); nextSlide(7)">Sleep</button>
+        <button class="btn" onclick="alert('I knew it! You need your brother.'); nextSlide(7)">Your Brother</button>
+    </section>
+
+    <section class="slide" id="slide7">
+        <h1>Pop for Luck! 🎈</h1>
+        <div style="font-size: 50px;">
+            <span onclick="this.innerHTML='🌟'">🎈</span>
+            <span onclick="this.innerHTML='💎'">🎈</span>
+            <span onclick="this.innerHTML='🔥'">🎈</span>
+        </div>
+        <button class="btn" onclick="nextSlide(8)">Next</button>
+    </section>
+
+    <section class="slide" id="slide8">
+        <h1>Time to Cut the Cake! 🎂</h1>
+        <div class="cake-container" onclick="cutCake()">
+            <div class="knife" id="knife">🔪</div>
+            <div class="cake" id="cake-emoji">🎂</div>
+        </div>
+        <h2 id="cake-msg" style="color: var(--primary); visibility: hidden;">YUMMY! 🎉</h2>
+        <button class="btn" style="visibility: hidden;" id="next-after-cake" onclick="nextSlide(9)">Final Surprise</button>
+    </section>
+
+    <section class="slide" id="slide9">
+        <h1>A Special Tribute 🎥</h1>
+        <div class="media-box" style="max-width: 600px;">
+            <video src="final-video.mp4" controls playsinline></video>
+        </div>
+        <button class="btn" onclick="nextSlide(10)">One Last Thing</button>
+    </section>
+
+    <section class="slide" id="slide10">
+        <h1 style="color: var(--primary);">Happy Birthday,<br>Future Dr. Vidhushi!</h1>
+        <p>I love you more than words can say.</p>
+        <div style="font-size: 50px;">🎂🎈🎁</div>
+        <button class="btn" onclick="location.reload()">Replay the Magic</button>
+    </section>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        let isPlaying = false;
+        let currentSlide = 1;
+
+        function toggleMusic() {
+            if (isPlaying) { audio.pause(); document.getElementById('musicBtn').innerHTML = '🔇'; } 
+            else { audio.play(); document.getElementById('musicBtn').innerHTML = '🎵'; }
+            isPlaying = !isPlaying;
+        }
+
+        function nextSlide(n) {
+            document.getElementById(`slide${currentSlide}`).classList.remove('active');
+            currentSlide = n;
+            document.getElementById(`slide${currentSlide}`).classList.add('active');
+        }
+
+        function startSurprise() {
+            if (!isPlaying) toggleMusic(); 
+            nextSlide(2);
+        }
+
+        function triggerSequence() {} // Placeholder
+
+        function triggerTreeSequence() {
+            const heart = document.getElementById('big-heart-container');
+            const videoBox = document.getElementById('mid-video-box');
+            const canvas = document.getElementById('tree-canvas');
+            const instr = document.getElementById('tree-instr');
+
+            // 1. Heart falls and disappears
+            heart.style.transform = "translateY(500px) scale(0)";
+            heart.style.opacity = "0";
+
+            setTimeout(() => {
+                heart.style.display = 'none';
+                instr.style.display = 'none';
+                
+                // 2. Large Video appears
+                videoBox.style.display = 'block';
+                document.getElementById('midVideo').play();
+
+                // 3. After a short delay, start growing the tree below/behind
+                setTimeout(() => {
+                    canvas.style.display = 'block';
+                    startReferenceTree();
+                }, 2000);
+            }, 1000);
+        }
+
+        function startReferenceTree() {
+            const canvas = document.getElementById('tree-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400; canvas.height = 350;
+
+            function drawBranch(x, y, len, angle, width) {
+                ctx.beginPath(); ctx.save();
+                ctx.strokeStyle = "#ffb3c1"; ctx.lineWidth = width;
+                ctx.translate(x, y); ctx.rotate(angle * Math.PI / 180);
+                ctx.moveTo(0, 0); ctx.lineTo(0, -len); ctx.stroke();
+                
+                if (len < 10) {
+                    ctx.fillStyle = "#ff4d6d";
+                    ctx.fillText("❤️", 0, -len);
+                    ctx.restore(); return;
+                }
+                
+                setTimeout(() => {
+                    drawBranch(0, -len, len * 0.8, angle - 15, width * 0.7);
+                    drawBranch(0, -len, len * 0.8, angle + 15, width * 0.7);
+                }, 120);
+                ctx.restore();
+            }
+
+            drawBranch(200, 350, 65, 0, 5);
+            setTimeout(() => { document.getElementById('tree-next').style.display = 'block'; }, 6000);
+        }
+
+        function moveNoButton() {
+            const btn = document.getElementById('noBtn');
+            btn.style.left = Math.random() * 70 + '%';
+            btn.style.top = Math.random() * 70 + '%';
+        }
+
+        function cutCake() {
+            document.getElementById('cake-emoji').innerHTML = '🍰';
+            document.getElementById('knife').style.opacity = '0';
+            document.getElementById('cake-msg').style.visibility = 'visible';
+            document.getElementById('next-after-cake').style.visibility = 'visible';
+        }
+
+        setInterval(() => {
+            const h = document.createElement('div');
+            h.innerHTML = '❤️'; h.className = 'floating-heart';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.fontSize = Math.random() * 20 + 15 + 'px';
+            document.getElementById('hearts').appendChild(h);
+            setTimeout(() => h.style.transform = 'translateY(-110vh)', 50);
+            setTimeout(() => h.remove(), 6000);
+        }, 400);
+    </script>
+</body>
+</html>
